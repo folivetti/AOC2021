@@ -1,37 +1,35 @@
 module Day02 where
 
+import Data.Foldable (fold)
+
 data Position = Position { horizontal :: Int
                          , depth      :: Int
                          , aim        :: Int 
-                         } deriving Show
+                         } deriving (Show)
 
-data Command = Forward Int | Down Int | Up Int | None
-                  deriving Show
+instance Semigroup  Position where 
+    Position x y z <> Position a b c = Position (x+a) (y+b + z*a) (z+c)
+instance Monoid Position where 
+    mempty = Position 0 0 0 
 
-applyCommand :: Position -> Command -> Position
-applyCommand pos (Forward x) = pos{ horizontal = horizontal pos + x }
-applyCommand pos (Down x)    = pos{ depth = depth pos + x }
-applyCommand pos (Up x)      = pos{ depth = depth pos - x }
-applyCommand pos None        = pos
-
-applyCommandFixed :: Position -> Command -> Position 
-applyCommandFixed pos (Forward x) = pos{ horizontal = horizontal pos + x, depth = depth pos + aim pos * x }
-applyCommandFixed pos (Down x)    = pos{ aim = aim pos + x }
-applyCommandFixed pos (Up x)      = pos{ aim = aim pos - x }
-applyCommandFixed pos None        = pos
-
-parseLine :: String -> Command
+parseLine :: String -> Position
 parseLine l = case words l of
-                ["forward", x] -> Forward $ read x
-                ["down", x]    -> Down $ read x
-                ["up", x]      -> Up $ read x
-                _              -> None
+                ["forward", x] -> Position (read x) 0 0 
+                ["down", x]    -> Position 0 (read x) 0
+                ["up", x]      -> Position 0 (negate $ read x) 0
+                _              -> Position 0 0 0
+parseLineFix :: String -> Position
+parseLineFix l = case words l of
+                ["forward", x] -> Position (read x) 0 0 
+                ["down", x]    -> Position 0 0 (read x)
+                ["up", x]      -> Position 0 0 (negate $ read x)
+                _              -> Position 0 0 0
 
 day02 :: IO ()
 day02 = do
-    dat <- map parseLine . lines <$> readFile "inputs/day02.txt"
+    dat <- lines <$> readFile "inputs/day02.txt"
     let pos   = Position 0 0 0
-        part1 = foldl applyCommand pos dat
-        part2 = foldl applyCommandFixed pos dat
+        part1 = fold (pos: map parseLine dat)
+        part2 = fold (pos: map parseLineFix dat)
     print $ horizontal part1 * depth part1
     print $ horizontal part2 * depth part2
