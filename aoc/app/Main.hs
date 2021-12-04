@@ -3,6 +3,7 @@ module Main where
 import Day01
 import Day02
 import Day03
+import Day04
 
 main :: IO ()
-main = day03
+main = day04
