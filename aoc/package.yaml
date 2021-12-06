@@ -25,7 +25,7 @@ dependencies:
 - mtl
 - split 
 - containers
-
+- vector
 library:
   source-dirs: src
 

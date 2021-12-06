@@ -30,6 +30,7 @@ library
       Day03
       Day04
       Day05
+      Day06
   other-modules:
       Paths_aoc
   hs-source-dirs:
@@ -40,6 +41,7 @@ library
     , containers
     , mtl
     , split
+    , vector
   default-language: Haskell2010
 
 executable aoc-exe
@@ -56,6 +58,7 @@ executable aoc-exe
     , containers
     , mtl
     , split
+    , vector
   default-language: Haskell2010
 
 test-suite aoc-test
@@ -73,4 +76,5 @@ test-suite aoc-test
     , containers
     , mtl
     , split
+    , vector
   default-language: Haskell2010
