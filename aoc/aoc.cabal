@@ -37,7 +37,9 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      attoparsec
+    , base >=4.7 && <5
+    , bytestring
     , comonad
     , containers
     , mtl
@@ -51,10 +53,12 @@ executable aoc-exe
       Paths_aoc
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -O2 -optc-O3 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc
+    , attoparsec
     , base >=4.7 && <5
+    , bytestring
     , comonad
     , containers
     , mtl
@@ -72,7 +76,9 @@ test-suite aoc-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc
+    , attoparsec
     , base >=4.7 && <5
+    , bytestring
     , comonad
     , containers
     , mtl

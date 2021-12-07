@@ -26,6 +26,9 @@ dependencies:
 - split 
 - containers
 - vector
+- bytestring 
+- attoparsec
+
 library:
   source-dirs: src
 
@@ -34,6 +37,8 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -O2 
+    - -optc-O3
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
