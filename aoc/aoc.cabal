@@ -43,6 +43,7 @@ library
     , comonad
     , containers
     , mtl
+    , quickselect
     , split
     , vector
   default-language: Haskell2010
@@ -62,6 +63,7 @@ executable aoc-exe
     , comonad
     , containers
     , mtl
+    , quickselect
     , split
     , vector
   default-language: Haskell2010
@@ -82,6 +84,7 @@ test-suite aoc-test
     , comonad
     , containers
     , mtl
+    , quickselect
     , split
     , vector
   default-language: Haskell2010

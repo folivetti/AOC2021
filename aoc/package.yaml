@@ -28,6 +28,7 @@ dependencies:
 - vector
 - bytestring 
 - attoparsec
+- quickselect
 
 library:
   source-dirs: src

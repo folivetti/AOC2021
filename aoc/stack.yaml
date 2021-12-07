@@ -65,3 +65,5 @@ packages:
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
+extra-deps:
+  - quickselect-0.1.0.0@sha256:15d2af6cfa716b58a780ce1f3551fa1d102164dabfd7427a9600fd195da9431c,3024
