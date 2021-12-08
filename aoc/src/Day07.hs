@@ -2,6 +2,7 @@
 module Day07 where
 
 import Data.List ( sort, foldl' )
+
 import qualified Data.ByteString.Char8 as B
 import Data.Attoparsec.ByteString.Char8
 import qualified Data.Vector.Unboxed as U 
@@ -11,13 +12,13 @@ import Data.Select.Unboxed.Quick
 example :: [Int]
 example = [16,1,2,0,4,2,7,1,2,14]
 
+
 mean' :: U.Vector Int -> Int 
 mean' xs = round $ fromIntegral (U.sum xs) / fromIntegral (U.length xs)
 
-mean :: [Int] -> Int
-mean xs = round $ fromIntegral acc / fromIntegral count 
-  where
-    (acc, count) = foldl' (\(s, c) x -> (s + x, c + 1)) (0,0) xs 
+mean :: [Int] -> Int 
+mean xs = round $ fromIntegral s / fromIntegral count 
+    where (s, count) = foldl' (\(x,c) a -> (x+a, c+1)) (0,0) xs
 
 median' :: U.Vector Int -> Int 
 median' xs 
