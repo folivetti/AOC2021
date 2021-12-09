@@ -29,6 +29,7 @@ dependencies:
 - bytestring 
 - attoparsec
 - quickselect
+- array 
 
 library:
   source-dirs: src

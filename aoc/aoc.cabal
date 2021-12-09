@@ -33,12 +33,14 @@ library
       Day06
       Day07
       Day08
+      Day09
   other-modules:
       Paths_aoc
   hs-source-dirs:
       src
   build-depends:
-      attoparsec
+      array
+    , attoparsec
     , base >=4.7 && <5
     , bytestring
     , comonad
@@ -58,6 +60,7 @@ executable aoc-exe
   ghc-options: -O2 -optc-O3 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc
+    , array
     , attoparsec
     , base >=4.7 && <5
     , bytestring
@@ -79,6 +82,7 @@ test-suite aoc-test
   ghc-options: -O2 -optc-O3 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc
+    , array
     , attoparsec
     , base >=4.7 && <5
     , bytestring

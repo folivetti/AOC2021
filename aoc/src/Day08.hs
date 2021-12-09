@@ -12,6 +12,9 @@ getInput = map (toTuple . map words . splitOn " | ") . lines
 toSets :: [([String],[String])] -> ([[S.Set Char]], [[S.Set Char]])
 toSets xs = (map (map S.fromList . fst) xs, map (map S.fromList . snd) xs)
 
+testSingle :: String -> ([S.Set Char], [S.Set Char])
+testSingle xs = let (a, b) = toTuple $ map words $ splitOn " | " xs in (map S.fromList a, map S.fromList b)
+
 -- partial function but...meh! 
 toTuple :: [a] -> (a, a)
 toTuple [x,y] = (x,y)
