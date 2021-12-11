@@ -68,12 +68,6 @@ step = do modify updateMap
 countFlashes :: Octopuses -> Int
 countFlashes = M.size . M.filter (== Energy 0)
 
-repeatUntilM :: (Int -> Bool) -> Energy [Int]
-repeatUntilM p = do x <- step 
-                    if p x 
-                       then pure [x]
-                       else (x:) <$> repeatUntilM p 
-
 debugGrid :: Energy a -> Octopuses -> IO () 
 debugGrid e = printGrid . execState e
 
@@ -81,7 +75,10 @@ part1 :: Energy Int
 part1 = sum <$> replicateM 100 step 
 
 part2 :: Energy Int 
-part2 = length <$> repeatUntilM (==100)
+part2 = do x <- step 
+           if x == 100 
+              then pure 1 
+              else (1 +) <$> part2 
 
 day11 :: IO ()
 day11 = do
