@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveFunctor #-}
 module Day10 where 
 
-import Data.List (sort)
+import Data.List (sort, foldl')
 
 data Status a = Valid | Invalid a | Incomplete String deriving (Show, Functor)
 
@@ -65,19 +65,20 @@ getStack (Incomplete stack) = stack
 getStack _ = [] 
 
 incompleteScore :: [Char] -> Int
-incompleteScore = foldl (\acc c -> 5*acc + char2points2 c) 0
+incompleteScore = foldl' (\acc c -> 5*acc + char2points2 c) 0
+{-# INLINE incompleteScore #-}
 
 middleScore :: [Int] -> Int 
 middleScore xs = sort xs !! (n `div` 2)
   where 
       n = length xs 
 
-part1, part2 :: [[Char]] -> Int
-part1 = sumInvalids . map (fmap char2points . checkStatus)
-part2 = middleScore . map (incompleteScore . map inverse . getStack) . filter isIncomplete . map checkStatus
+part1, part2 :: [Status Char] -> Int
+part1 = sumInvalids . map (fmap char2points)
+part2 = middleScore . map (incompleteScore . map inverse . getStack) . filter isIncomplete 
 
 day10 :: IO ()
 day10 = do 
-    dat <- lines <$> readFile "inputs/day10.txt"
+    dat <- map checkStatus . lines <$> readFile "inputs/day10.txt"
     print $ part1 dat
     print $ part2 dat
