@@ -7,14 +7,19 @@ import Data.Char ( digitToInt, intToDigit )
 import Control.Monad.State
 import Data.Maybe (mapMaybe)
 
-type Octopuses = Map (Int, Int) Int
-type Energy a = State Octopuses a
+data Octopus   = Energy Int | Flashed deriving Eq 
+type Octopuses = Map (Int, Int) Octopus
+type Energy a  = State Octopuses a
+
+instance Show Octopus where
+    show (Energy x) = show x
+    show Flashed    = "0"
 
 parseMtx :: [String] -> Octopuses
 parseMtx = M.unions . map (uncurry parseRow) . enumerate
 
 parseRow :: Int -> String -> Octopuses
-parseRow ix = M.fromList . map (\(iy,c) -> ((ix,iy), digitToInt c)) . enumerate
+parseRow ix = M.fromList . map (\(iy,c) -> ((ix,iy), Energy $ digitToInt c)) . enumerate
 
 enumerate :: [a] -> [(Int, a)]
 enumerate = zip [0..]
@@ -25,79 +30,62 @@ deltas = filter (/=(0,0)) $ (,) <$> [-1..1] <*> [-1..1]
 (.+.) :: Num a => (a, a) -> (a, a) -> (a, a)
 (x,y) .+. (a,b) = (x+a, y+b)
 
-
-countN :: Eq a => a -> Map (Int, Int) a -> (Int, Int) -> Int
-countN n s idx = length . filter (==n) . mapMaybe ((s !?) . (idx .+.)) $ deltas 
-
-repeatWhileNEQ :: Eq a => (a -> a) -> a -> a 
-repeatWhileNEQ f x 
-  | y == x    = x
-  | otherwise = repeatWhileNEQ f y 
-  where y = f x 
-
 printGrid :: Octopuses -> IO ()
 printGrid m = mapM_ printRow [0..9] >> putChar '\n'
     where
-        printRow ix = mapM_ (putChar . intToDigit . (m !) . (ix,)) [0..9] >> putChar '\n'
+        printRow ix = mapM_ (putStr . show . (m !) . (ix,)) [0..9] >> putChar '\n'
 
-updateMap :: Map (Int, Int) Int -> Map (Int, Int) (Either Int Int) 
-updateMap m = M.mapWithKey upd m 
-    where 
-        upd k x | x == 9    = Left 0 
-                | otherwise = Right $ x + nines k + 1
-        nines idx = length . filter (==9) . mapMaybe ((m !?) . (idx .+.)) $ deltas
+inc :: Octopus -> Octopus
+inc (Energy x) = Energy $ x + 1
+inc Flashed    = Flashed
 
-updateMapEither :: Map (Int, Int) (Either Int Int) -> Map (Int, Int) (Either Int Int) 
-updateMapEither m = M.mapWithKey upd m 
-    where 
-        upd k (Left x) = Left x 
-        upd k (Right x) | x > 9     = Left 0 
-                        | otherwise = Right $ x + nines k 
-        nines idx = length . filter isGT9 . mapMaybe ((m !?) . (idx .+.)) $ deltas
-        isGT9 (Left x) = False 
-        isGT9 (Right x) = x > 9
+unflash :: Octopus -> Octopus
+unflash Flashed = Energy 0
+unflash x       = x
 
-flash :: Map (Int, Int) (Either Int Int) -> Map (Int, Int) Int 
-flash = M.map fromFlash . repeatWhileNEQ updateMapEither
-  where 
-      fromFlash (Left x)  = x 
-      fromFlash (Right x) = x 
+isFlashing :: Octopus -> Bool
+isFlashing (Energy x) = x > 9
+isFlashing _          = False
 
-step :: (Octopuses -> a) -> Energy a
-step f = state $ \s ->
-    let s' = flash $ updateMap s
-    in (f s', s')
+updateMap :: Octopuses -> Octopuses
+updateMap = M.map unflash . flash . M.map inc
 
-countFlashes :: Octopuses -> Int 
-countFlashes = M.size . M.filter (==0) 
+flash :: Octopuses -> Octopuses
+flash m | m == m'   = m
+        | otherwise = flash m'
+  where
+    m' = M.mapWithKey upd m
+    upd k (Energy x)
+      | x > 9     = Flashed
+      | otherwise = Energy $ x + flashing k
+    upd k Flashed = Flashed
+    flashing k    = length . filter isFlashing . mapMaybe ((m !?) . (k .+.)) $ deltas
 
-runSteps :: Int -> Energy Int 
-runSteps 0 = pure 0 
-runSteps n = do x <- step countFlashes 
-                y <- runSteps (n-1)
-                pure (x+y)
+step :: Energy Int 
+step = do modify updateMap
+          gets countFlashes
 
-runUntilAllEq :: Int -> Energy Int 
-runUntilAllEq n = do 
-    x <- step countFlashes 
-    if x == 100
-       then pure $ n + 1
-       else runUntilAllEq (n+1) 
+countFlashes :: Octopuses -> Int
+countFlashes = M.size . M.filter (== Energy 0)
 
-debugSteps :: Int -> Energy Octopuses 
-debugSteps 0 = get 
-debugSteps n = do step id 
-                  debugSteps (n-1)
+repeatUntilM :: (Int -> Bool) -> Energy [Int]
+repeatUntilM p = do x <- step 
+                    if p x 
+                       then pure [x]
+                       else (x:) <$> repeatUntilM p 
 
+debugGrid :: Energy a -> Octopuses -> IO () 
+debugGrid e = printGrid . execState e
+
+part1 :: Energy Int 
+part1 = sum <$> replicateM 100 step 
+
+part2 :: Energy Int 
+part2 = length <$> repeatUntilM (==100)
 
 day11 :: IO ()
 day11 = do
-  dat <- lines <$> readFile "inputs/day11.txt"
-  let mtx = parseMtx dat
-  printGrid mtx
-  let mtx' = debugSteps 1 `evalState` mtx
-  printGrid mtx'
-  let x = runSteps 100 `evalState` mtx
-  print x
-  let x = runUntilAllEq 0 `evalState` mtx 
-  print x
+  mtx <- parseMtx . lines <$> readFile "inputs/day11.txt"
+  print $ part1 `evalState` mtx
+  print $ part2 `evalState` mtx
+  debugGrid part1 mtx
