@@ -36,6 +36,7 @@ library
       Day09
       Day10
       Day11
+      Day12
   other-modules:
       Paths_aoc
   hs-source-dirs:
@@ -48,6 +49,7 @@ library
     , comonad
     , containers
     , mtl
+    , multiset
     , quickselect
     , split
     , vector
@@ -69,6 +71,7 @@ executable aoc-exe
     , comonad
     , containers
     , mtl
+    , multiset
     , quickselect
     , split
     , vector
@@ -91,6 +94,7 @@ test-suite aoc-test
     , comonad
     , containers
     , mtl
+    , multiset
     , quickselect
     , split
     , vector

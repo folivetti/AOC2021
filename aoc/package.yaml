@@ -30,6 +30,7 @@ dependencies:
 - attoparsec
 - quickselect
 - array 
+- multiset 
 
 library:
   source-dirs: src
