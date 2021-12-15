@@ -40,7 +40,8 @@ packages:
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
-# extra-deps: []
+extra-deps: 
+  - PSQueue-1.1@sha256:188b45e7cca61d59df13a0a24eaa259b54eaedbafc639bef519e5f38d718fd3e,1036
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
