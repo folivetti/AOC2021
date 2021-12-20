@@ -1,13 +1,14 @@
+{-# LANGUAGE StrictData #-}
 module Day17 where
 
 import Data.Maybe (mapMaybe) 
 
 type Coord = (Int, Int)
 
-data Projectile = Proj { _x :: Int
-                       , _y :: Int
-                       , _x_speed :: Int
-                       , _y_speed :: Int
+data Projectile = Proj { _x :: {-# UNPACK #-} Int
+                       , _y :: {-# UNPACK #-} Int
+                       , _x_speed :: {-# UNPACK #-} Int
+                       , _y_speed :: {-# UNPACK #-} Int
                        } deriving Show
 
 example, myInput :: (Coord, Coord)

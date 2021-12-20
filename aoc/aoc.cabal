@@ -42,6 +42,9 @@ library
       Day15
       Day16
       Day17
+      Day18
+      Day19
+      Day20
   other-modules:
       Paths_aoc
   hs-source-dirs:
@@ -67,7 +70,7 @@ executable aoc-exe
       Paths_aoc
   hs-source-dirs:
       app
-  ghc-options: -O3 -optc-O3 -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -O3 -optc-O3 -threaded -rtsopts -with-rtsopts=-N -funfolding-use-threshold=16
   build-depends:
       aoc
     , array

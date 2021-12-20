@@ -15,9 +15,11 @@ parseFile = M.fromList . concat . zipWith parseLine [0..] . map (map digitToInt)
 parseLine :: Int -> [Int] -> [((Int, Int), Int)]
 parseLine ix = zipWith parseCoord [0..]
   where parseCoord iy x = ((ix,iy), x) 
+{-# INLINE parseLine #-}
 
 getGoal :: Map (Int, Int) Int -> (Int, Int) 
 getGoal = fst . M.findMax 
+{-# INLINE getGoal #-}
 
 expand :: Map (Int, Int) Int -> Map (Int, Int) Int
 expand cave = expanded cave
