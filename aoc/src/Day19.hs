@@ -44,16 +44,17 @@ align :: [(Scanner, Point)] -> [Scanner] -> [Scanner] -> [(Scanner, Point)]
 align res _ [] = res 
 align res (cur:refs) scanners = align (found <> res) (map fst found <> refs) notFound 
   where 
-    (found, notFound)  = partitionEithers [ eitherHead sc $ checkAngles cur sc | sc <- scanners]
+    (found, notFound)  = partitionEithers [ eitherHead sc $ checkAngles sc | sc <- scanners]
     eitherHead x []    = Right x 
     eitherHead _ (x:_) = Left x 
-    checkAngles x y    = [(map (pos+) a, pos) | a <- angles y, pos <- overlap x a]
+    checkAngles y    = [(map (pos+) a, pos) | a <- angles y, pos <- overlap cur a]
     angles = transpose . map rots
     rots p = scanl (flip ($)) p steps 
       where 
         steps = [r,t,t,t,r,t,t,t,r,t,t,t, r.t.r.r, t,t,t,r,t,t,t,r,t,t,t]
         r (P x y z) = P x z (-y) 
         t (P x y z) = P (-y) x z 
+align _ _ _ = error "Error trying to align" 
 
 overlap :: Scanner -> Scanner -> [Point]
 overlap as bs = M.keys . M.filter (>= 12) . M.fromListWith (+) . map (, 1) $ 
